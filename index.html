@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Raja Sharma - Movies & TV Shows</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0c15;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        @keyframes rgbFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .rgb-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #ff0066, #00ff66, #0066ff, #ff6600);
+            background-size: 400% 400%;
+            animation: rgbFlow 10s ease infinite;
+            opacity: 0.1;
+            z-index: -2;
+        }
+
+        .glass-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 12, 21, 0.85);
+            backdrop-filter: blur(2px);
+            z-index: -1;
+        }
+
+        /* Developer Badge - Fixed position, no hiding */
+        .dev-badge {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #1a1c2a, #0f1119);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 9999;
+            border: 1px solid #e50914;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            font-family: monospace;
+        }
+        
+        .dev-badge a {
+            color: #e50914;
+            text-decoration: none;
+        }
+        
+        .dev-badge a:hover {
+            text-decoration: underline;
+        }
+        
+        .dev-badge i {
+            color: #0088cc;
+            margin-right: 4px;
+        }
+        
+        .dev-badge .channel-link {
+            color: #2aabee;
+            margin-left: 8px;
+        }
+
+        .header {
+            background: rgba(10, 12, 21, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #e50914;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #ff0066, #00ff66, #0066ff, #ff6600);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: #1a1c25;
+            padding: 0.3rem;
+            border-radius: 50px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: #e50914;
+            color: white;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            background: #1a1c25;
+            padding: 0.3rem 0.3rem 0.3rem 1rem;
+            border-radius: 50px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            width: 200px;
+            outline: none;
+        }
+
+        .search-box button {
+            background: #e50914;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        .logout-btn, .owner-panel-btn {
+            background: #e50914;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .owner-panel-btn {
+            background: #ff6600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            background: linear-gradient(90deg, rgba(10,12,21,0.8), rgba(229,9,20,0.2)), url('https://image.tmdb.org/t/p/original/wwemzKWzjKYJFfCeiB57q3r4Bcm.png');
+            background-size: cover;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            border-left: 4px solid #e50914;
+            padding-left: 1rem;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .movie-card {
+            background: #151821;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(229,9,20,0.5);
+        }
+
+        .movie-card img {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+        }
+
+        .movie-card .info {
+            padding: 0.8rem;
+        }
+
+        .movie-card .info h3 {
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #ffc107;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            background: #111;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-modal {
+            background: #e50914;
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .player-container {
+            flex: 1;
+        }
+
+        #playerFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .server-selector {
+            background: #1a1c25;
+            padding: 0.8rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .server-btn {
+            background: #2a2c35;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .server-btn.active {
+            background: #e50914;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        /* MAINTENANCE MODE FULL PAGE OVERLAY */
+        .maintenance-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.96);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+
+        .maintenance-card {
+            text-align: center;
+            background: #151821;
+            padding: 2.5rem;
+            border-radius: 30px;
+            max-width: 450px;
+            margin: 2rem;
+            border: 2px solid #ff6600;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        .maintenance-card i {
+            font-size: 4rem;
+            color: #ff6600;
+            margin-bottom: 1rem;
+        }
+
+        .maintenance-card h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ff6600;
+        }
+
+        .maintenance-card p {
+            color: #ccc;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .owner-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .owner-card {
+            background: #151821;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            border: 2px solid #ff6600;
+        }
+
+        .owner-card h2 {
+            color: #ff6600;
+            margin-bottom: 1rem;
+        }
+
+        .owner-input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: #1e212a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .owner-btn {
+            background: #ff6600;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .site-status {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #1e212a;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .status-on { color: #00ff66; }
+        .status-off { color: #ff0066; }
+
+        .footer {
+            background: #0f1119;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid #222;
+        }
+
+        .developer-info { margin-bottom: 1rem; }
+        .developer-name { font-size: 1.2rem; color: #e50914; }
+        .telegram-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #0088cc;
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            margin: 0.4rem;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .telegram-link:hover { background: #006699; transform: scale(1.02); }
+        .channel-link { background: #2aabee; }
+
+        @media (max-width: 768px) {
+            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .header-content { flex-direction: column; }
+            .search-box input { width: 150px; }
+            .dev-badge { font-size: 9px; top: 5px; right: 5px; padding: 4px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="rgb-bg"></div>
+<div class="glass-overlay"></div>
+
+<!-- DEVELOPER BADGE - FIXED POSITION, SABKO DIKHEGA, SITE NAME HIDE NAHI KAREGA -->
+<div class="dev-badge">
+    <i class="fab fa-telegram"></i> 
+    <a href="https://t.me/rajamods7pro" target="_blank">@rajamods7pro</a>
+    <span style="color:#666; margin:0 5px">|</span>
+    <a href="https://t.me/+f5eAkzBdfnY2MjY1" target="_blank" class="channel-link"><i class="fab fa-telegram"></i> Channel</a>
+</div>
+
+<!-- MAINTENANCE OVERLAY -->
+<div id="maintenanceOverlay" class="maintenance-overlay">
+    <div class="maintenance-card">
+        <i class="fas fa-tools"></i>
+        <h1>🔧 Site Under Maintenance 🔧</h1>
+        <p>Developer <strong style="color:#e50914">@rajamods7pro</strong> is fixing issues.</p>
+        <p>Please wait patiently. Site will be back soon!</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://t.me/+f5eAkzBdfnY2MjY1" target="_blank" style="color: #ff6600;">
+                <i class="fab fa-telegram"></i> Join Channel for Updates
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+    <div style="background: #151821; border-radius: 20px; padding: 2rem; width: 90%; max-width: 400px;">
+        <h2 id="authTitle" style="text-align: center; margin-bottom: 1.5rem; background: linear-gradient(90deg, #ff0066, #00ff66); -webkit-background-clip: text; background-clip: text; color: transparent;"><i class="fas fa-user-plus"></i> Register</h2>
+        <input type="text" id="authUsername" style="width: 100%; padding: 0.8rem; margin: 0.5rem 0; background: #1e212a; border: 1px solid #333; border-radius: 10px; color: white;" placeholder="Username">
+        <input type="password" id="authPassword" style="width: 100%; padding: 0.8rem; margin: 0.5rem 0; background: #1e212a; border: 1px solid #333; border-radius: 10px; color: white;" placeholder="Password">
+        <button id="authSubmitBtn" style="width: 100%; padding: 0.8rem; margin-top: 1rem; background: #e50914; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer;">Register</button>
+        <div id="switchAuth" style="text-align: center; margin-top: 1rem; color: #888; cursor: pointer;">
+            Already have an account? <span style="color: #e50914;">Login</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div id="mainContent" style="display: none;">
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1><i class="fas fa-play-circle"></i> RAJA SHARMA</h1>
+            </div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" data-type="movie"><i class="fas fa-film"></i> Movies</button>
+                <button class="tab-btn" data-type="tv"><i class="fas fa-tv"></i> TV Shows</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search movies, shows...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-info">
+                <span><i class="fas fa-user"></i> <span id="loggedUser">User</span></span>
+                <button id="ownerPanelBtn" style="display: none; background:#ff6600; border:none; padding:0.3rem 1rem; border-radius:50px; color:white; cursor:pointer;"><i class="fas fa-crown"></i> Owner</button>
+                <button id="logoutBtn" style="background:#e50914; border:none; padding:0.3rem 1rem; border-radius:50px; color:white; cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <h2>Welcome Back, <span id="heroUser">User</span>!</h2>
+            <p>Thousands of movies & TV shows available in HD & 4K</p>
+        </div>
+
+        <h2 class="section-title" id="sectionTitle">🔥 Trending Now</h2>
+        <div id="movieGrid" class="movie-grid">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="developer-info">
+            <p><i class="fas fa-code"></i> Developed by</p>
+            <p class="developer-name"><i class="fab fa-telegram"></i> @rajamods7pro</p>
+        </div>
+        <div>
+            <a href="https://t.me/+f5eAkzBdfnY2MjY1" target="_blank" class="telegram-link channel-link">
+                <i class="fab fa-telegram"></i> Join Our Channel
+            </a>
+            <a href="https://t.me/rajamods7pro" target="_blank" class="telegram-link">
+                <i class="fab fa-telegram"></i> Contact Developer
+            </a>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.8rem; color: #666;">© 2025 Raja Sharma - All Rights Reserved</p>
+    </div>
+</div>
+
+<!-- Owner Panel -->
+<div id="ownerPanel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center;">
+    <div style="background: #151821; border-radius: 20px; padding: 2rem; width: 90%; max-width: 500px; border: 2px solid #ff6600;">
+        <h2 style="color:#ff6600; margin-bottom:1rem;"><i class="fas fa-crown"></i> Owner Control Panel</h2>
+        <div style="margin: 1rem 0; padding: 1rem; background: #1e212a; border-radius: 10px; text-align: center;">
+            Site Status: <span id="statusText" style="color:#00ff66;">ONLINE</span>
+        </div>
+        <button id="toggleSiteBtn" style="background:#ff6600; width:100%; padding:0.8rem; margin-top:0.5rem; border:none; border-radius:10px; color:white; font-weight:bold; cursor:pointer;"><i class="fas fa-power-off"></i> Turn Site OFF</button>
+        <hr style="margin: 1rem 0; border-color: #333;">
+        <h3>Change Owner Password</h3>
+        <input type="password" id="newOwnerPass" style="width:100%; padding:0.8rem; margin:0.5rem 0; background:#1e212a; border:1px solid #333; border-radius:10px; color:white;" placeholder="New Owner Password">
+        <button id="changeOwnerPassBtn" style="background:#ff6600; width:100%; padding:0.8rem; margin-top:0.5rem; border:none; border-radius:10px; color:white; cursor:pointer;"><i class="fas fa-key"></i> Update Password</button>
+        <hr style="margin: 1rem 0; border-color: #333;">
+        <button id="closeOwnerPanel" style="background:#333; width:100%; padding:0.8rem; border:none; border-radius:10px; color:white; cursor:pointer;"><i class="fas fa-times"></i> Close Panel</button>
+    </div>
+</div>
+
+<!-- Player Modal -->
+<div id="playerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000;">
+    <div style="width:100%; height:100%; display:flex; flex-direction:column;">
+        <div style="background:#111; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="playerTitle"><i class="fas fa-play"></i> Now Playing</h3>
+            <button id="closePlayerBtn" style="background:#e50914; border:none; width:35px; height:35px; border-radius:50%; color:white; cursor:pointer;"><i class="fas fa-times"></i></button>
+        </div>
+        <div style="flex:1;">
+            <iframe id="playerFrame" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+        </div>
+        <div style="background:#1a1c25; padding:0.8rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <button class="server-btn" data-server="vidsrc" style="background:#2a2c35; border:none; padding:0.5rem 1.5rem; border-radius:8px; color:white; cursor:pointer;">Server 1 (HD)</button>
+            <button class="server-btn" data-server="2embed" style="background:#2a2c35; border:none; padding:0.5rem 1.5rem; border-radius:8px; color:white; cursor:pointer;">Server 2 (Fast)</button>
+            <button class="server-btn" data-server="vidsrc2" style="background:#2a2c35; border:none; padding:0.5rem 1.5rem; border-radius:8px; color:white; cursor:pointer;">Server 3 (4K)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== GLOBAL SYNC USING localStorage WITH CROSS-TAB SYNC ==========
+    // Ye system har 3 second mein check karega aur agar kisi ne site off kiya toh sab update ho jayenge
+    
+    let OWNER_USERNAME = "rajamods7";
+    let OWNER_PASSWORD = "admin123";
+    let SITE_ACTIVE = true;
+    let currentUser = null;
+    let isOwner = false;
+    let syncInterval = null;
+    
+    // Global status key - ye localStorage mein store hoga
+    const GLOBAL_STATUS_KEY = "RAJA_SHARMA_GLOBAL_STATUS";
+    
+    // Function to get current global status
+    function getGlobalStatus() {
+        const saved = localStorage.getItem(GLOBAL_STATUS_KEY);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                // Agar 1 minute se zyada purana hai toh default true
+                if (Date.now() - data.timestamp < 60000) {
+                    return data.active;
+                }
+            } catch(e) {}
+        }
+        return true;
+    }
+    
+    // Function to set global status (owner call karega)
+    function setGlobalStatus(active) {
+        const data = {
+            active: active,
+            timestamp: Date.now(),
+            setBy: currentUser || "owner"
+        };
+        localStorage.setItem(GLOBAL_STATUS_KEY, JSON.stringify(data));
+        return active;
+    }
+    
+    // YE IMPORTANT HAI - Cross-tab sync using storage event
+    // Jab bhi koi tab localStorage change karega, saare dusre tabs ko notification milega
+    window.addEventListener('storage', function(e) {
+        if (e.key === GLOBAL_STATUS_KEY && e.newValue) {
+            try {
+                const newData = JSON.parse(e.newValue);
+                const newStatus = newData.active;
+                if (newStatus !== SITE_ACTIVE) {
+                    SITE_ACTIVE = newStatus;
+                    updateMaintenanceDisplay();
+                    if (!SITE_ACTIVE && !isOwner) {
+                        document.getElementById('movieGrid').innerHTML = getMaintenanceHTML();
+                        document.getElementById('maintenanceOverlay').style.display = 'flex';
+                    } else if (SITE_ACTIVE) {
+                        document.getElementById('maintenanceOverlay').style.display = 'none';
+                        displayContent();
+                    }
+                }
+            } catch(e) {}
+        }
+    });
+    
+    // Periodic check bhi rakhte hain (backup)
+    function startSync() {
+        if (syncInterval) clearInterval(syncInterval);
+        syncInterval = setInterval(() => {
+            const newStatus = getGlobalStatus();
+            if (newStatus !== SITE_ACTIVE) {
+                SITE_ACTIVE = newStatus;
+                updateMaintenanceDisplay();
+                if (!SITE_ACTIVE && !isOwner) {
+                    document.getElementById('movieGrid').innerHTML = getMaintenanceHTML();
+                    document.getElementById('maintenanceOverlay').style.display = 'flex';
+                } else if (SITE_ACTIVE) {
+                    document.getElementById('maintenanceOverlay').style.display = 'none';
+                    displayContent();
+                }
+            }
+        }, 3000);
+    }
+    
+    function updateMaintenanceDisplay() {
+        const overlay = document.getElementById('maintenanceOverlay');
+        if (!SITE_ACTIVE && !isOwner) {
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        } else {
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+    
+    function getMaintenanceHTML() {
+        return `
+            <div style="text-align: center; padding: 4rem; background: #151821; border-radius: 20px; grid-column: 1/-1;">
+                <i class="fas fa-tools" style="font-size: 4rem; color: #ff6600;"></i>
+                <h2 style="margin-top: 1rem;">🔧 Site Under Maintenance 🔧</h2>
+                <p>Developer <strong style="color:#e50914">@rajamods7pro</strong> is fixing issues.</p>
+                <p>Please wait patiently. Site will be back soon!</p>
+                <div style="margin-top: 1rem;">
+                    <a href="https://t.me/+f5eAkzBdfnY2MjY1" target="_blank" style="color: #ff6600;">
+                        <i class="fab fa-telegram"></i> Join Channel for Updates
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+    
+    // ========== ENCRYPTED API KEYS ==========
+    const _0x3a7b = ['8af7e40f61051da789619422ccdbada4', 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4YWY3ZTQwZjYxMDUxZGE3ODk2MTk0MjJjY2RiYWRhNCIsIm5iZiI6MTc3NDk5NjM2MC40NzIsInN1YiI6IjY5Y2M0Yjg4ODA2N2ExOTQ5ZDQ2NTFkMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KSsessr1oSkWIS0R0l_4rMgS6tEqSbYzeSF8U3FDqoM'];
+    
+    function getAccessToken() { return _0x3a7b[1]; }
+    
+    const ACCESS_TOKEN = getAccessToken();
+    const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+    
+    // ========== USER LOGIN SYSTEM ==========
+    function encryptData(data) { return btoa(JSON.stringify(data)); }
+    function decryptData(encrypted) { try { return JSON.parse(atob(encrypted)); } catch(e) { return null; } }
+    
+    function loadUsers() {
+        const users = localStorage.getItem('raja_users');
+        return users ? decryptData(users) : [];
+    }
+    
+    function saveUsers(users) { localStorage.setItem('raja_users', encryptData(users)); }
+    
+    function register(username, password) {
+        const users = loadUsers();
+        if (users.find(u => u.username === username)) return { success: false, message: 'Username exists!' };
+        users.push({ username, password });
+        saveUsers(users);
+        return { success: true, message: 'Registered!' };
+    }
+    
+    function login(username, password) {
+        if (username === OWNER_USERNAME && password === OWNER_PASSWORD) {
+            isOwner = true;
+            currentUser = username;
+            localStorage.setItem('raja_current_user', encryptData({ user: username, isOwner: true }));
+            return { success: true, isOwner: true };
+        }
+        const users = loadUsers();
+        const user = users.find(u => u.username === username && u.password === password);
+        if (user) {
+            isOwner = false;
+            currentUser = username;
+            localStorage.setItem('raja_current_user', encryptData({ user: username, isOwner: false }));
+            return { success: true, isOwner: false };
+        }
+        return { success: false, message: 'Invalid credentials!' };
+    }
+    
+    function checkLoggedIn() {
+        const saved = localStorage.getItem('raja_current_user');
+        if (saved) {
+            const data = decryptData(saved);
+            if (data && data.user) {
+                currentUser = data.user;
+                isOwner = data.isOwner || false;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    function logout() {
+        localStorage.removeItem('raja_current_user');
+        currentUser = null;
+        isOwner = false;
+        document.getElementById('authModal').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'none';
+    }
+    
+    // ========== TMDB API ==========
+    async function fetchTMDB(endpoint) {
+        const url = `https://api.themoviedb.org/3/${endpoint}`;
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` } });
+        return await res.json();
+    }
+    
+    function getStreamUrl(type, id, server) {
+        if (type === 'movie') {
+            switch(server) {
+                case 'vidsrc': return `https://vidsrc.xyz/embed/movie/${id}`;
+                case '2embed': return `https://www.2embed.cc/embed/${id}`;
+                case 'vidsrc2': return `https://vidsrc.net/embed/movie/${id}`;
+                default: return `https://vidsrc.xyz/embed/movie/${id}`;
+            }
+        } else {
+            switch(server) {
+                case 'vidsrc': return `https://vidsrc.xyz/embed/tv/${id}/1/1`;
+                case '2embed': return `https://www.2embed.cc/embedtv/${id}&s=1&e=1`;
+                case 'vidsrc2': return `https://vidsrc.net/embed/tv/${id}/1/1`;
+                default: return `https://vidsrc.xyz/embed/tv/${id}/1/1`;
+            }
+        }
+    }
+    
+    let currentType = 'movie';
+    let currentQuery = '';
+    let currentMediaId = null;
+    let currentServer = 'vidsrc';
+    
+    async function displayContent() {
+        if (!SITE_ACTIVE && !isOwner) {
+            document.getElementById('movieGrid').innerHTML = getMaintenanceHTML();
+            return;
+        }
+        
+        const grid = document.getElementById('movieGrid');
+        grid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+        
+        let endpoint = '';
+        if (currentQuery) {
+            endpoint = `search/${currentType}?query=${encodeURIComponent(currentQuery)}&language=en-US&page=1`;
+        } else {
+            endpoint = `trending/${currentType}/day?language=en-US`;
+        }
+        
+        const data = await fetchTMDB(endpoint);
+        document.getElementById('sectionTitle').innerHTML = currentQuery ? `🔍 Results for "${currentQuery}"` : `🔥 Trending ${currentType === 'movie' ? 'Movies' : 'TV Shows'}`;
+        
+        if (!data.results || data.results.length === 0) {
+            grid.innerHTML = '<div class="loading">No results found 😢</div>';
+            return;
+        }
+        
+        grid.innerHTML = '';
+        data.results.slice(0, 20).forEach(item => {
+            const title = currentType === 'movie' ? item.title : item.name;
+            const year = (currentType === 'movie' ? item.release_date : item.first_air_date)?.split('-')[0] || 'N/A';
+            const poster = item.poster_path ? IMG_BASE + item.poster_path : 'https://via.placeholder.com/300x450?text=No+Image';
+            const rating = item.vote_average?.toFixed(1) || 'N/A';
+            
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            card.innerHTML = `<div class="rating"><i class="fas fa-star"></i> ${rating}</div><img src="${poster}" alt="${title}"><div class="info"><h3>${title}</h3><p>${year}</p></div>`;
+            card.onclick = () => openPlayer(item.id, title);
+            grid.appendChild(card);
+        });
+    }
+    
+    function openPlayer(id, title) {
+        if (!SITE_ACTIVE && !isOwner) {
+            alert("🔧 Site is under maintenance by @rajamods7pro. Please wait!");
+            return;
+        }
+        currentMediaId = id;
+        document.getElementById('playerTitle').innerHTML = `<i class="fas fa-play"></i> ${title}`;
+        loadPlayerStream();
+        document.getElementById('playerModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function loadPlayerStream() {
+        const url = getStreamUrl(currentType, currentMediaId, currentServer);
+        document.getElementById('playerFrame').src = url;
+        document.querySelectorAll('.server-btn').forEach(btn => {
+            if (btn.dataset.server === currentServer) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+    
+    function changeServer(server) { currentServer = server; loadPlayerStream(); }
+    function closePlayer() { document.getElementById('playerModal').style.display = 'none'; document.getElementById('playerFrame').src = ''; document.body.style.overflow = 'auto'; }
+    
+    // ========== OWNER PANEL ==========
+    function openOwnerPanel() {
+        if (!isOwner) return;
+        document.getElementById('ownerPanel').style.display = 'flex';
+        updateOwnerPanelUI();
+    }
+    
+    function updateOwnerPanelUI() {
+        const statusText = document.getElementById('statusText');
+        const toggleBtn = document.getElementById('toggleSiteBtn');
+        if (SITE_ACTIVE) {
+            statusText.innerHTML = 'ONLINE';
+            statusText.style.color = '#00ff66';
+            toggleBtn.innerHTML = '<i class="fas fa-power-off"></i> Turn Site OFF';
+        } else {
+            statusText.innerHTML = 'OFFLINE';
+            statusText.style.color = '#ff0066';
+            toggleBtn.innerHTML = '<i class="fas fa-power-off"></i> Turn Site ON';
+        }
+    }
+    
+    function toggleSite() {
+        if (!isOwner) return;
+        SITE_ACTIVE = !SITE_ACTIVE;
+        // GLOBAL UPDATE - sab devices ke liye
+        setGlobalStatus(SITE_ACTIVE);
+        updateOwnerPanelUI();
+        
+        if (!SITE_ACTIVE) {
+            document.getElementById('movieGrid').innerHTML = getMaintenanceHTML();
+            // Har user ke liye maintenance overlay show hoga via storage event
+        } else {
+            displayContent();
+        }
+        alert(`Site is now ${SITE_ACTIVE ? 'ONLINE' : 'OFFLINE'}`);
+        document.getElementById('ownerPanel').style.display = 'none';
+    }
+    
+    function changeOwnerPassword() {
+        if (!isOwner) return;
+        const newPass = document.getElementById('newOwnerPass').value;
+        if (newPass.length < 3) {
+            alert("Password must be at least 3 characters!");
+            return;
+        }
+        OWNER_PASSWORD = newPass;
+        alert("Owner password changed!");
+        document.getElementById('newOwnerPass').value = '';
+    }
+    
+    // ========== AUTH UI ==========
+    let isLoginMode = false;
+    
+    function handleAuth() {
+        const username = document.getElementById('authUsername').value.trim();
+        const password = document.getElementById('authPassword').value;
+        if (!username || !password) { alert('Enter username and password!'); return; }
+        
+        if (isLoginMode) {
+            const result = login(username, password);
+            if (result.success) {
+                document.getElementById('authModal').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('loggedUser').innerText = username;
+                document.getElementById('heroUser').innerText = username;
+                if (isOwner) {
+                    document.getElementById('ownerPanelBtn').style.display = 'block';
+                }
+                SITE_ACTIVE = getGlobalStatus();
+                updateMaintenanceDisplay();
+                displayContent();
+                startSync();
+            } else { alert(result.message); }
+        } else {
+            const result = register(username, password);
+            if (result.success) { alert('Registered! Please login.'); isLoginMode = true; updateAuthUI(); document.getElementById('authUsername').value = ''; document.getElementById('authPassword').value = ''; }
+            else { alert(result.message); }
+        }
+    }
+    
+    function updateAuthUI() {
+        const title = document.getElementById('authTitle');
+        const btn = document.getElementById('authSubmitBtn');
+        const switchText = document.getElementById('switchAuth');
+        if (isLoginMode) {
+            title.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+            btn.innerHTML = 'Login';
+            switchText.innerHTML = `Don't have account? <span>Register</span>`;
+        } else {
+            title.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+            btn.innerHTML = 'Register';
+            switchText.innerHTML = `Already have account? <span>Login</span>`;
+        }
+    }
+    
+    // ========== INIT ==========
+    SITE_ACTIVE = getGlobalStatus();
+    
+    if (checkLoggedIn()) {
+        document.getElementById('authModal').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('loggedUser').innerText = currentUser;
+        document.getElementById('heroUser').innerText = currentUser;
+        if (isOwner) document.getElementById('ownerPanelBtn').style.display = 'block';
+        updateMaintenanceDisplay();
+        displayContent();
+        startSync();
+    }
+    
+    // Event Listeners
+    document.getElementById('authSubmitBtn').addEventListener('click', handleAuth);
+    document.getElementById('switchAuth').addEventListener('click', () => { isLoginMode = !isLoginMode; updateAuthUI(); document.getElementById('authUsername').value = ''; document.getElementById('authPassword').value = ''; });
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
+    document.getElementById('playerModal').addEventListener('click', (e) => { if (e.target === document.getElementById('playerModal')) closePlayer(); });
+    document.getElementById('ownerPanelBtn').addEventListener('click', openOwnerPanel);
+    document.getElementById('closeOwnerPanel').addEventListener('click', () => { document.getElementById('ownerPanel').style.display = 'none'; });
+    document.getElementById('toggleSiteBtn').addEventListener('click', toggleSite);
+    document.getElementById('changeOwnerPassBtn').addEventListener('click', changeOwnerPassword);
+    
+    document.querySelectorAll('.server-btn').forEach(btn => { btn.addEventListener('click', () => changeServer(btn.dataset.server)); });
+    document.getElementById('searchBtn').addEventListener('click', () => { currentQuery = document.getElementById('searchInput').value.trim(); displayContent(); });
+    document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') { currentQuery = e.target.value.trim(); displayContent(); } });
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentType = btn.dataset.type;
+            currentQuery = '';
+            document.getElementById('searchInput').value = '';
+            displayContent();
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
